@@ -1,5 +1,5 @@
-const express = require('express')
-
+const express = require('express');
+const cors = require('cors');
 class Server {
     //Creo el servidor y en la nueva instancia creo la app de express
     constructor() {
@@ -12,8 +12,11 @@ class Server {
     }
 
     middlewares() {
+
+        this.app.use( cors() );
+
         // Directorio publico
-        this.app.use( express.static('public'))
+        this.app.use( express.static('public'));
     }
     
     routes() {

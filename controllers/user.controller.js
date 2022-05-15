@@ -4,9 +4,21 @@ const User = require('../models/user.model');
 
 const bcryptjs = require('bcryptjs');
 
-const userGet = (req, res = response) => {
+const userGet = async (req, res = response) => {
+
+    const { limit= 5, from = 0 } = req.query;
+    // const query = { state: true }
+
+    const [total, usuarios] = await Promise.all([
+        User.countDocuments({state: true}),
+        User.find({state: true})
+            .skip(Number(from))
+            .limit(Number(limit))
+    ])
+
     res.json({
-        msg: 'get API - controller'
+        total,
+        usuarios
     });
 }
 
@@ -31,7 +43,7 @@ const userPut = async( req, res = response) => {
 
     const { id } = req.params;
 
-    const { password, google, email, ...resto} = req.body;
+    const { _id, password, google, email, ...resto} = req.body;
 
     if (password){
         const salt = bcryptjs.genSaltSync();

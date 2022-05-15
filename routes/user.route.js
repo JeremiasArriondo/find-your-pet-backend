@@ -2,7 +2,7 @@ const { Router } = require('express');
 const { check, body } = require('express-validator');
 const { userGet, userPost, userPut } = require('../controllers/user.controller');
 const { validarCampos } = require('../middlewares/validar-campos');
-const { emailExiste } = require('../helpers/db-validators');
+const { emailExiste, existUserById } = require('../helpers/db-validators');
 const router = new Router();
 
 router.get('/', userGet);
@@ -20,10 +20,12 @@ router.post('/',
 
 router.put('/:id',
     [
+        check('id', 'No es un ID válido').isMongoId(),
+        check('id').custom( existUserById ),
         validarCampos
     ],
     userPut
-)
+);
 
 
 //EL check valida lo que viene del body

@@ -15,13 +15,6 @@ const userPost = async (req = request, res = response) => {
     const { name, email, password } = req.body;
     const user = new User({name, email, password});
 
-    //Verificar si el correo existe
-    const existeEmail = await User.findOne({ email});
-    if (existeEmail) {
-        return res.status(400).json({
-            msg: 'EL correo ya existe'
-        })
-    }
     //Encriptar la contraseña
     //El salt es el tamaño de la encriptacion, por defecto es 10
     const salt = bcryptjs.genSaltSync();

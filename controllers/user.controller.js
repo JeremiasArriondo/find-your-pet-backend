@@ -27,7 +27,27 @@ const userPost = async (req = request, res = response) => {
     });
 }
 
+const userPut = async( req, res = response) => {
+
+    const { id } = req.params;
+
+    const { password, google, email, ...resto} = req.body;
+
+    if (password){
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync( password, salt);
+    }
+
+    const usuario = await User.findByIdAndUpdate( id, resto, {new: true});
+
+    res.json({
+        msg: 'Put API - Controller',
+        usuario
+    })
+}
+
 module.exports = {
     userGet,
-    userPost
+    userPost, 
+    userPut
 }

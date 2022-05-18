@@ -1,0 +1,6 @@
+const jwt = require('jsonwebtoken');
+
+const validarJWT = () => {
+    
+}
+

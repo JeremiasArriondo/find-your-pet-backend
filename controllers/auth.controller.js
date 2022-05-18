@@ -3,7 +3,6 @@ const { response } = require('express');
 const { generarJWT } = require('../helpers/generar-jwt');
 const Usuario = require('../models/user.model');
 
-
 const login = async (req, res = response) => {
 
     const { email, password } = req.body;
@@ -34,7 +33,8 @@ const login = async (req, res = response) => {
         const token = await generarJWT( usuario.id );
 
         res.json({
-                msg: 'Login ok'
+                usuario,
+                token
             })
     } catch (error) {
         res.status(500).json({

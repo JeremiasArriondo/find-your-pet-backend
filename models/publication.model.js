@@ -10,10 +10,17 @@ const PublicationSchema = Schema({
             type: String
         }
     ],
+    usuario: {
+        type: Schema.ObjectId,
+        ref: 'User',
+        required: true
+    },
     updateDate: {
         type: Date,
         default: Date.now
-    }
-})
+    },
+    },
+    { timestamps: true }
+);
 
 module.exports = model('Publication', PublicationSchema);

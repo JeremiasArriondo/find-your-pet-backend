@@ -4,7 +4,7 @@ const { userGet, userPost, userPut, userDelete } = require('../controllers/user.
 const { validarCampos } = require('../middlewares/validar-campos');
 const { emailExiste, existUserById } = require('../helpers/db-validators');
 const { validarJWT } = require('../middlewares/validar-jwt');
-const router = new Router();
+const router = Router();
 
 router.get('/', userGet);
 

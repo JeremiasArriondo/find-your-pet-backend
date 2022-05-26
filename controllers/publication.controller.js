@@ -1,28 +1,50 @@
-const mongoose = require('mongoose');
-const createResponse = require('../helpers/createResponse');
+const { response, request } = require('express');
 const User = require('../models/user.model');
 const Publication = require('../models/publication.model');
-const { request } = require('express');
-const { response } = require('express');
+const createResponse = require('../helpers/createResponse');
 
-const newPublication = async (res = response, req = request) => {
-    try {
-        const {description, images} = req.body;
-        //Usuario que realiza la publicacion
-        const user = req.usuario;
-        res.status(201).json({
-            description,
-            images,
-            user
-        })
-        // const publication = new Publication({description, images, user})
-        // return createResponse(res, 201, publication)
-    } catch (error) {
-        createResponse(res, 500, null, 'Error al crear la publicación');
-    }
+/**
+ * Endpoint encargado de crear una nueva publicación
+ * 
+ */
+
+const newPublication = async (req = request, res = response) => {
+
+    const { description } = req.body;
+    
+    res.json({
+        msg: 'Post API - controller',
+        description
+    });
+}
+
+const getPublication = async (req, res) => {
+    const { id } = req.params;
 };
 
+const getAllPublications = async (req, res) => {
+    const { limit= 10, from = 0 } = req.query;
+    // const query = { state: true }
+
+    const [total, publications] = await Promise.all([
+        Publication.countDocuments({state: true}),
+        Publication.find({state: true})
+            .skip(Number(from))
+            .limit(Number(limit))
+    ])
+    return createResponse(res, 200, {total, publications})
+}
+
+const deletePublication = async (req, res) => {
+    const { id } = req.params;
+    const publication = await Publication.findByIdAndUpdate(id, { state: false }, {new: true});
+    //Crear response
+}
 
 module.exports = {
-    newPublication
+    newPublication,
+    getPublication,
+    getAllPublications,
+    // updatePublication,
+    deletePublication
 }

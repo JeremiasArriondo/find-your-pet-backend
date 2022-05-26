@@ -3,6 +3,7 @@ const { response, request } = require('express');
 const User = require('../models/user.model');
 
 const bcryptjs = require('bcryptjs');
+const createResponse = require('../helpers/createResponse');
 
 const userGet = async (req, res = response) => {
 
@@ -16,10 +17,11 @@ const userGet = async (req, res = response) => {
             .limit(Number(limit))
     ])
 
-    res.json({
-        total,
-        usuarios
-    });
+    // res.json({
+    //     total,
+    //     usuarios
+    // });
+    return createResponse(res, 200, {total, usuarios})
 }
 
 const userPost = async (req = request, res = response) => {

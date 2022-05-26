@@ -5,9 +5,11 @@ const { validarCampos } = require('../middlewares/validar-campos');
 
 const router = Router();
 
-router.post(
-    '/',
-    [validarCampos],
+router.post('/',
+    [
+        check('description', 'La descripción es necesaria').not().isEmpty(),
+        validarCampos
+    ],
     newPublication
 );
 

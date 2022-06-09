@@ -1,5 +1,7 @@
 const { response } = require("express");
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
+
 
 const cargarArchivo = (req, res = response) => {
     //Validaciones
@@ -10,16 +12,29 @@ const cargarArchivo = (req, res = response) => {
 
     // console.log('req.files >>>', req.files); // eslint-disable-line
     const { archivo } = req.files;
+    
+    const nameCrop = archivo.name.split('.');
+    const typeExtension = nameCrop[ nameCrop.length -1];
+    //Validar extensión
+    const validExtension = ['png', 'jpg', 'jpeg'];
 
-    const uploadPath = path.join(__dirname, '/uploads/', archivo.name);
-
-    sampleFile.mv(uploadPath, function(err) {
-    if (err) {
-        return res.status(500).send(err);
+    if (!validExtension.includes( typeExtension )){
+        return res.status(400).json({
+            msg: `La extensión ${typeExtension} no es válida, ${validExtension}`
+        })
     }
+    //Genero un identificador unico a la imagen
+    const nombreTemp = uuidv4() + '.' + typeExtension;
 
-    res.send('File uploaded to ' + uploadPath);
-    })
+    const uploadPath = path.join(__dirname, '../uploads/', nombreTemp);
+
+    archivo.mv(uploadPath, (err) => {
+        if (err) {
+            return res.status(500).json({err});
+        }
+        res.json({ msg: 'File uploaded to ' + uploadPath});
+    });
+
 };
 
 

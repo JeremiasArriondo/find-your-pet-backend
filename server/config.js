@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { dbConnection } = require('../database/config');
+const fileUpload = require('express-fileupload')
 
 class Server {
     //Creo el servidor y en la nueva instancia creo la app de express
@@ -34,6 +35,12 @@ class Server {
 
         // Directorio publico
         this.app.use( express.static('public'));
+    
+        // Fileupload - Carga de archivos
+        this.app.use( fileUpload({
+            useTempFiles: true,
+            tempFileDir: '/tmp/'
+        }));
     }
     
     routes() {

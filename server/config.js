@@ -10,6 +10,8 @@ class Server {
         this.userPath = '/api/user';
         this.authPath = '/api/auth';
         this.publicationPath = '/api/publication';
+        //ruta de prueba para subir archivos
+        this.uploads = '/api/uploads';
         // Conectar a base de datos
         this.connectDB();
 
@@ -38,6 +40,7 @@ class Server {
         this.app.use(this.authPath, require('../routes/auth.route'))
         this.app.use(this.userPath, require('../routes/user.route'))
         this.app.use(this.publicationPath, require('../routes/publicaction.route'))
+        this.app.use(this.uploads, require('../routes/uploads'))
     }
 
     listen() {

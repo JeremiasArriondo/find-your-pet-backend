@@ -5,11 +5,9 @@ const PublicationSchema = Schema({
         type: String,
         required: [true, 'Es necesario una descripción']
     },
-    images: [
-        {
+    images: {
             type: String
-        }
-    ],
+    },
     usuario: {
         type: Schema.ObjectId,
         ref: 'User',

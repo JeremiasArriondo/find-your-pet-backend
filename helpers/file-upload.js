@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const extensions = ['png', 'jpg', 'jpeg'];
 
-const fileUpload = ( files, validExtension = extensions ) => {
+const fileUpload = ( files, validExtension = extensions, folder='' ) => {
     return new Promise((resolve, reject) => {
         const { archivo } = files;
     
@@ -16,13 +16,13 @@ const fileUpload = ( files, validExtension = extensions ) => {
         //Genero un identificador unico a la imagen
         const finalName = uuidv4() + '.' + typeExtension;
     
-        const uploadPath = path.join(__dirname, '../uploads/', finalName);
+        const uploadPath = path.join(__dirname, '../uploads/', folder, finalName);
     
         archivo.mv(uploadPath, (err) => {
             if (err) {
                 return reject(err);
             }
-            resolve( uploadPath );
+            resolve( finalName );
         });
     })
 

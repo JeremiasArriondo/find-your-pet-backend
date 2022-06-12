@@ -9,13 +9,17 @@ const createResponse = require('../helpers/createResponse');
  */
 
 const newPublication = async (req = request, res = response) => {
+    try {
+        const { description, typePublication, ...rest } = req.body;
+        
+        const publication = new Publication({description, typePublication, rest})
 
-    const { description, typePublication } = req.body;
-    
-    res.json({
-        msg: 'Post API - controller',
-        description
-    });
+        // const publicationSaved = await publication.save(); 
+
+        // createResponse(res, 201, publicationSaved);
+    } catch (error) {
+        createResponse(res, 500, 'Error al crear la publicación')
+    }
 }
 
 const getPublication = async (req, res) => {
@@ -36,9 +40,14 @@ const getAllPublications = async (req, res) => {
 }
 
 const deletePublication = async (req, res) => {
-    const { id } = req.params;
-    const publication = await Publication.findByIdAndUpdate(id, { state: false }, {new: true});
     //Crear response
+    try {
+        const { id } = req.params;
+        const publication = await Publication.findByIdAndUpdate(id, { state: false }, {new: true});
+        createResponse(res, 200, publication)
+    } catch (error) {
+        createResponse(res, 500, null, 'Error al eliminar la publicación')
+    }
 }
 
 module.exports = {

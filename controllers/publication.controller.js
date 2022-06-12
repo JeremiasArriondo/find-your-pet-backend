@@ -10,7 +10,7 @@ const createResponse = require('../helpers/createResponse');
 
 const newPublication = async (req = request, res = response) => {
 
-    const { description } = req.body;
+    const { description, typePublication } = req.body;
     
     res.json({
         msg: 'Post API - controller',

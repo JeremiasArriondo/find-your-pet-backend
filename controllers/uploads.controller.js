@@ -1,4 +1,8 @@
 const { response } = require("express");
+
+const cloudinary = require('cloudinary').v2;
+cloudinary.config( process.env.CLOUDINARY_URL );
+
 const { fileUpload } = require("../helpers/file-upload");
 const Publication = require('../models/publication.model');
 const User = require('../models/user.model');
@@ -12,7 +16,6 @@ const cargarArchivo = async (req, res = response) => {
     } catch (msg) {
         res.status(400).json({ msg });
     }
-    
 };
 
 const actualizarImagen = async(req, res = response ) => {
@@ -57,6 +60,52 @@ const actualizarImagen = async(req, res = response ) => {
     res.json(modelo);
 }
 
+//Implementación con cloudinary
+const actualizarImagenCloudinary = async(req, res = response ) => {
+    
+    const {coleccion, id} = req.params;
+
+    let modelo;
+    
+    switch ( coleccion ) {
+        case 'user':
+            modelo = await User.findById(id);
+            if( !modelo ){
+                return res.status(400).json({
+                    msg: 'No existe un usuario con ese id'
+                });
+            }
+        break;
+        case 'publication':
+            modelo = await Publication.findById(id);
+            if( !modelo ){
+                return res.status(400).json({
+                    msg: 'No existe una publication con ese id'
+                });
+            }
+        break;
+    
+        default:
+            return res.status(500).json({msg: 'Error en el server, contacte con el administrador'})
+    }
+    //Limpiar imagenes si se actualiza
+    if (modelo.img){
+        const nombreArr = modelo.img.split('/');
+        const name = nombreArr[ nombreArr.length -1 ];
+        const [ public_id ] = name.split('.');
+        cloudinary.uploader.destroy(public_id);
+    }
+
+    const { tempFilePath } = req.files.archivo;
+
+    const { secure_url } = await cloudinary.uploader.upload( tempFilePath )
+
+    modelo.img = secure_url;
+    
+    await modelo.save();
+
+    res.json(modelo);
+}
 
 const mostrarImagen = async(req, res= response) => {
     
@@ -101,5 +150,6 @@ const mostrarImagen = async(req, res= response) => {
 module.exports = {
     cargarArchivo,
     actualizarImagen,
-    mostrarImagen
+    mostrarImagen,
+    actualizarImagenCloudinary
 }

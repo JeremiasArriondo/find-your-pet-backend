@@ -8,6 +8,9 @@ const PublicationSchema = Schema({
     images: {
             type: String
     },
+    typePublication: {
+        type: String,
+    },
     usuario: {
         type: Schema.ObjectId,
         ref: 'User',

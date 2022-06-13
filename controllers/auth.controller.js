@@ -13,22 +13,16 @@ const login = async (req, res = response) => {
         // Verificar si el email existe
         const user = await Usuario.findOne({ email });
         if ( !user ) {
-            return res.status(400).json({
-                msg: `Usuario o contraseña incorrectos`
-            });
+            return createResponse(res, 400, null, 'Usuario o contraseña incorrectos');
         };
         // SI el usuario está activo
         if ( !user.state ) {
-            return res.status(400).json({
-                msg: 'El usuario está inactivo'
-            });
+            return createResponse(res, 400, null, 'El usuario está inactivo, consulte con el administrador');
         };
         // Verificar la contraseña
         const validPassword = bcryptjs.compareSync( password, user.password );
         if ( !validPassword ){
-            return res.status(400).json({
-                msg: `Usuario o contraseña incorrectos`
-            });
+            return createResponse(res, 400, null, 'Usuario o contraseña incorrectos');
         };
         // Generar el JWT
         const token = await generarJWT( user.id );
@@ -45,16 +39,12 @@ const login = async (req, res = response) => {
 
         createResponse(res, 200, data);
     } catch (error) {
-        res.status(500).json({
-            msg: 'Hable con el administrador'
-        })
+        createResponse(res, 500, null, 'Hable con el administrador')
     }   
 }
 
 const googleSignIn = async( req, res = response) => {
     const { id_token } = req.body;
-
-
     res.json({
         msg: 'ok',
         id_token

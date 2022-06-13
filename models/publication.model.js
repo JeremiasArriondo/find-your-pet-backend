@@ -5,13 +5,13 @@ const PublicationSchema = Schema({
         type: String,
         required: [true, 'Es necesario una descripción']
     },
-    images: {
+    image: {
             type: String
     },
     typePublication: {
         type: String,
     },
-    usuario: {
+    user: {
         type: Schema.ObjectId,
         ref: 'User',
         required: true

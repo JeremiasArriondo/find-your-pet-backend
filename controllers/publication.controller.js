@@ -2,20 +2,32 @@ const { response, request } = require('express');
 const User = require('../models/user.model');
 const Publication = require('../models/publication.model');
 const createResponse = require('../helpers/createResponse');
+const mongoose = require('mongoose');
+const { fileUpload } = require('../helpers/file-upload');
 
 /**
- * Endpoint encargado de crear una nueva publicación
- * 
- */
+* Controlador encargado de crear una nueva publicación
+*/
 
 const newPublication = async (req = request, res = response) => {
     try {
-        const { description, typePublication, ...rest } = req.body;
+        //Desestructuro del body
+        const { description, typePublication } = req.body;
+        //Extraigo el id del usuario en el token
+        const { _id } = req.usuario;
+        //Subo imagen a cloudinary
+        // const image = await fileUpload( req.files );
+        const { tempFilePath } = req.files.archivo;
+        //Creación de la publicacion
+        const publication = new Publication({
+            description,
+            typePublication,
+            user: _id,
+            image
+        });
         
-        const publication = new Publication({description, typePublication, rest})
-
         // const publicationSaved = await publication.save(); 
-
+       
         // createResponse(res, 201, publicationSaved);
     } catch (error) {
         createResponse(res, 500, 'Error al crear la publicación')

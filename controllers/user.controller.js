@@ -5,7 +5,17 @@ const User = require('../models/user.model');
 const bcryptjs = require('bcryptjs');
 const createResponse = require('../helpers/createResponse');
 
-const userGet = async (req, res = response) => {
+const getUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const publication = await User.findById(id);
+        createResponse(res, 200, publication)
+    } catch (error) {
+        createResponse(res, 500, 'Error al obtener el usuario')
+    }
+};
+
+const getAllUsers = async (req, res = response) => {
 
     const { limit= 5, from = 0 } = req.query;
     // const query = { state: true }
@@ -20,10 +30,10 @@ const userGet = async (req, res = response) => {
     return createResponse(res, 200, {total, usuarios})
 }
 
-const userPost = async (req = request, res = response) => {
+const newUser = async (req = request, res = response) => {
     try {
-        const { name, email, password } = req.body;
-        const user = new User({name, email, password});
+        const { name, lastName, email, password } = req.body;
+        const user = new User({name, lastName, email, password});
 
         //Encriptar la contraseña
         //El salt es el tamaño de la encriptacion, por defecto es 10
@@ -38,7 +48,7 @@ const userPost = async (req = request, res = response) => {
     }  
 };
 
-const userPut = async( req, res = response) => {
+const updateUser = async( req, res = response) => {
     try {
         const { id } = req.params;
         //Desestructuro que lo necesite desde el body
@@ -58,7 +68,7 @@ const userPut = async( req, res = response) => {
     }
 }
 
-const userDelete = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
         // Borrado fisico
@@ -75,8 +85,9 @@ const userDelete = async (req, res) => {
 }
 
 module.exports = {
-    userGet,
-    userPost, 
-    userPut,
-    userDelete
+    getUser,
+    getAllUsers,
+    newUser, 
+    updateUser,
+    deleteUser
 }

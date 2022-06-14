@@ -1,12 +1,14 @@
 const { Router } = require('express');
 const { check, body } = require('express-validator');
-const { userGet, userPost, userPut, userDelete } = require('../controllers/user.controller');
+const { getUser, newUser, getAllUsers, updateUser, deleteUser } = require('../controllers/user.controller');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { emailExiste, existUserById } = require('../helpers/db-validators');
 const { validarJWT } = require('../middlewares/validar-jwt');
 const router = Router();
 
-router.get('/', userGet);
+router.get('/:id', getUser);
+
+router.get('/all', getAllUsers)
 
 router.post('/',
     [
@@ -16,7 +18,7 @@ router.post('/',
         body('email').custom( emailExiste ),
         validarCampos
     ],
-    userPost
+    newUser
 );
 
 router.put('/:id',
@@ -25,7 +27,7 @@ router.put('/:id',
         check('id').custom( existUserById ),
         validarCampos
     ],
-    userPut
+    updateUser
 );
 
 router.delete('/:id',
@@ -35,10 +37,7 @@ router.delete('/:id',
         check('id').custom( existUserById ),
         validarCampos
     ],
-    userDelete
-)
-
-
-//EL check valida lo que viene del body
+    deleteUser
+);
 
 module.exports = router;

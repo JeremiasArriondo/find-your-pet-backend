@@ -27,37 +27,80 @@ const newPublication = async (req, res = response) => {
             image: dataImagen.secure_url
         });
         
-        // const publicationSaved = await publication.save(); 
+        const publicationSaved = await publication.save(); 
        
-        createResponse(res, 201, publication);
+        createResponse(res, 201, publicationSaved);
     } catch (error) {
-        console.log(error)
         createResponse(res, 500, 'Error al crear la publicación')
     }
-}
+};
 
 const getPublication = async (req, res) => {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
+        const publication = await Publication.findById(id);
+        createResponse(res, 200, publication)
+    } catch (error) {
+        createResponse(res, 500, 'Error al obtener la publicación')
+    }
 };
 
 const getAllPublications = async (req, res) => {
-    const { limit= 10, from = 0 } = req.query;
-    // const query = { state: true }
+    try {
+        const { limit= 10, from = 0 } = req.query;
+        // const query = { state: true }
 
-    const [total, publications] = await Promise.all([
-        Publication.countDocuments({state: true}),
-        Publication.find({state: true})
-            .skip(Number(from))
-            .limit(Number(limit))
-    ])
-    return createResponse(res, 200, {total, publications})
-}
+        const [total, publications] = await Promise.all([
+            Publication.countDocuments({state: true}),
+            Publication.find({state: true})
+                .skip(Number(from))
+                .limit(Number(limit))
+        ]);
+        createResponse(res, 200, {total, publications})
+    } catch (error) {
+        createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
+    }
+};
+
+const updatePublication = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {...rest} = req.body;
+        const publication = await Publication.findById(id);
+        if(publication.imagen){
+            //Elimino la imagen desde cloudinary
+            const nombreArr = modelo.img.split('/');
+            const name = nombreArr[ nombreArr.length -1 ];
+            const [ public_id ] = name.split('.');
+            await cloudinary.uploader.destroy(public_id);
+        }
+        //Desestructuro el path temporal de la imagen
+        const { tempFilePath } = req.files.imagen;
+        //Subo imagen a cloudinary
+        const dataImagen = await cloudinary.uploader.upload( tempFilePath );
+        const updatedPublication = await Publication.findByIdAndUpdate(
+            id,
+            {...rest},
+            {new: true}
+        );
+        createResponse(res, 200, updatedPublication);
+    } catch (error) {
+        createResponse(res, 500, null, 'Error al actualizar la publicación')
+    }
+};
 
 const deletePublication = async (req, res) => {
-    //Crear response
     try {
         const { id } = req.params;
         const publication = await Publication.findByIdAndUpdate(id, { state: false }, {new: true});
+        //Borrar imagen desde cloudinary
+        if(publication.imagen){
+            const nombreArr = modelo.img.split('/');
+            const name = nombreArr[ nombreArr.length -1 ];
+            const [ public_id ] = name.split('.');
+            await cloudinary.uploader.destroy(public_id);
+        };
+        
         createResponse(res, 200, publication)
     } catch (error) {
         createResponse(res, 500, null, 'Error al eliminar la publicación')
@@ -68,6 +111,6 @@ module.exports = {
     newPublication,
     getPublication,
     getAllPublications,
-    // updatePublication,
+    updatePublication,
     deletePublication
 }

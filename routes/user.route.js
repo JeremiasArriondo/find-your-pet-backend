@@ -13,6 +13,7 @@ router.get('/all', getAllUsers)
 router.post('/',
     [
         check('name', 'El nombre es obligatorio').not().isEmpty(),
+        check('lastname', 'El apellido es obligatorio').not().isEmpty(),
         check('password', 'El password debe poseer más de 6 dígitos').isLength({min: 6}),
         check('email', 'El correo no es válido').isEmail(),
         body('email').custom( emailExiste ),

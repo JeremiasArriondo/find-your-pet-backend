@@ -25,7 +25,7 @@ router.post(
         validarJWT,
         upload,
         check('description', 'La descripción es necesaria').not().isEmpty(),
-
+        check('typePublication', 'No es un tipo de publicación válida').isIn(["BUSCADO", "ENCONTRADO"]),
         validarCampos
     ],
     newPublication
@@ -37,7 +37,7 @@ router.post(
  * @param {id} 
  */
 router.get(
-    '/:id',
+    '/all/:id',
     [
         validarJWT,
         validateId

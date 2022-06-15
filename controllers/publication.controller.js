@@ -12,7 +12,7 @@ cloudinary.config( process.env.CLOUDINARY_URL );
 const newPublication = async (req, res = response) => {
     try {
         //Desestructuro del body
-        const { description, typePublication } = req.body;
+        const { description, typePublication, ...rest } = req.body;
         //Extraigo el id del usuario en el token
         const { _id } = req.usuario;
         //Desestructuro el path temporal de la imagen
@@ -24,7 +24,8 @@ const newPublication = async (req, res = response) => {
             description,
             typePublication,
             user: _id,
-            image: dataImagen.secure_url
+            image: dataImagen.secure_url,
+            ...rest
         });
         
         const publicationSaved = await publication.save(); 
@@ -51,8 +52,8 @@ const getAllPublications = async (req, res) => {
         // const query = { state: true }
 
         const [total, publications] = await Promise.all([
-            Publication.countDocuments({state: true}),
-            Publication.find({state: true})
+            Publication.countDocuments(),
+            Publication.find()
                 .skip(Number(from))
                 .limit(Number(limit))
         ]);
@@ -80,7 +81,9 @@ const updatePublication = async (req, res) => {
         const dataImagen = await cloudinary.uploader.upload( tempFilePath );
         const updatedPublication = await Publication.findByIdAndUpdate(
             id,
-            {...rest},
+            {
+                imagen: dataImagen.secure_url,
+                ...rest},
             {new: true}
         );
         createResponse(res, 200, updatedPublication);
@@ -92,7 +95,7 @@ const updatePublication = async (req, res) => {
 const deletePublication = async (req, res) => {
     try {
         const { id } = req.params;
-        const publication = await Publication.findByIdAndUpdate(id, { state: false }, {new: true});
+        const publication = await Publication.findByIdAndDelete(id, {new: true});
         //Borrar imagen desde cloudinary
         if(publication.imagen){
             const nombreArr = modelo.img.split('/');

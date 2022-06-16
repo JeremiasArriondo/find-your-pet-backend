@@ -32,6 +32,7 @@ const newPublication = async (req, res = response) => {
        
         createResponse(res, 201, publicationSaved);
     } catch (error) {
+        console.log(error)
         createResponse(res, 500, 'Error al crear la publicación')
     }
 };

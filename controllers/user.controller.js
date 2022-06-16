@@ -32,8 +32,8 @@ const getAllUsers = async (req, res = response) => {
 
 const newUser = async (req = request, res = response) => {
     try {
-        const { name, lastName, email, password } = req.body;
-        const user = new User({name, lastName, email, password});
+        const { name, lastname, email, password } = req.body;
+        const user = new User({name, lastname, email, password});
 
         //Encriptar la contraseña
         //El salt es el tamaño de la encriptacion, por defecto es 10
@@ -44,6 +44,7 @@ const newUser = async (req = request, res = response) => {
         //Regreso el usuario guardado
         createResponse(res, 201, user);
     } catch (error) {
+        console.log(error)
         createResponse(res, 500, null, 'Error al crear usuario');
     }  
 };

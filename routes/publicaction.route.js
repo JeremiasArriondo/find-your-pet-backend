@@ -5,7 +5,9 @@ const {
     getPublication,
     getAllPublications,
     updatePublication,
-    deletePublication } = require('../controllers/publication.controller');
+    deletePublication, 
+    getAllTypeFound,
+    getAllTypeWanted} = require('../controllers/publication.controller');
 const upload = require('../helpers/upload');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -51,6 +53,22 @@ router.get(
 router.get(
     '/all',
     getAllPublications
+);
+
+/**
+ * Ruta para obtener todas las publicaciones con el tipo ENCONTRADO
+ */
+router.get(
+    '/found',
+    getAllTypeFound
+);
+
+/**
+ * Ruta para obtener todas las publicacion con el tipo BUSCADO
+ */
+router.get(
+    '/wanted',
+    getAllTypeWanted
 );
 
 /**

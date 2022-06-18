@@ -51,7 +51,6 @@ const getAllPublications = async (req, res) => {
     try {
         const { limit= 10, from = 0 } = req.query;
         // const query = { state: true }
-
         const [total, publications] = await Promise.all([
             Publication.countDocuments(),
             Publication.find()
@@ -63,6 +62,39 @@ const getAllPublications = async (req, res) => {
         createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
     }
 };
+
+const getAllTypeFound = async (req, res) => {
+    try {
+        const { limit= 10, from= 0} = req.query;
+        const query = {'typePublication':'ENCONTRADO'};
+        const [total, publicationsFound] = await Promise.all([
+            Publication.countDocuments(query),
+            Publication.find(query)
+                .skip(Number(from))
+                .limit(Number(limit))
+        ]);
+        createResponse(res, 200, {total, publicationsFound})
+    } catch (error) {
+        console.log(error)
+        createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
+    }
+}
+
+const getAllTypeWanted = async (req, res) => {
+    try {
+        const { limit= 10, from= 0} = req.query;
+        const query = {'typePublication':'BUSCADO'};
+        const [total, publicationsFind] = await Promise.all([
+            Publication.countDocuments(query),
+            Publication.find(query)
+                .skip(Number(from))
+                .limit(Number(limit))
+        ]);
+        createResponse(res, 200, {total, publicationsFind})
+    } catch (error) {
+        createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
+    }
+}
 
 const updatePublication = async (req, res) => {
     try {
@@ -115,6 +147,8 @@ module.exports = {
     newPublication,
     getPublication,
     getAllPublications,
+    getAllTypeFound,
+    getAllTypeWanted,
     updatePublication,
     deletePublication
 }

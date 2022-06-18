@@ -90,11 +90,31 @@ const getAllTypeWanted = async (req, res) => {
                 .skip(Number(from))
                 .limit(Number(limit))
         ]);
-        createResponse(res, 200, {total, publicationsFind})
+        createResponse(res, 200, {total, publicationsFind});
     } catch (error) {
-        createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
+        createResponse(res, 500, null, 'Error al obtener todas las publicaciones');
     }
-}
+};
+
+/**
+ * Endpoint para realizar busquedas por textos,  en la db
+ * se creo un indice del tipo text para realizar busquedas más rapidas en ese campo
+ * @param text
+ */
+const searchPublications = async (req, res) => {
+    try {
+
+        const {text} = req.body;
+
+        // const result = await Publication.find({$text: {$search: `${text}`}})
+        const result = await Publication.aggregate([
+            {$match: {$text: {$search: `${text}`}}}
+        ])
+        createResponse(res, 200, result);
+    } catch (error) {
+        createResponse(res, 500, null, 'Error al obtener las publicaciones');
+    }
+};
 
 const updatePublication = async (req, res) => {
     try {
@@ -150,5 +170,6 @@ module.exports = {
     getAllTypeFound,
     getAllTypeWanted,
     updatePublication,
-    deletePublication
+    deletePublication,
+    searchPublications
 }

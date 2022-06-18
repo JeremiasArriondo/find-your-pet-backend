@@ -7,7 +7,8 @@ const {
     updatePublication,
     deletePublication, 
     getAllTypeFound,
-    getAllTypeWanted} = require('../controllers/publication.controller');
+    getAllTypeWanted,
+    searchPublications} = require('../controllers/publication.controller');
 const upload = require('../helpers/upload');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -69,6 +70,15 @@ router.get(
 router.get(
     '/wanted',
     getAllTypeWanted
+);
+
+/**
+ * Ruta para obtener las publicaciones segun un filtro de texto
+ */
+
+router.post(
+    '/search',
+    searchPublications
 );
 
 /**

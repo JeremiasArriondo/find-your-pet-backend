@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { check, body } = require('express-validator');
+const { check } = require('express-validator');
 const { getUser, newUser, getAllUsers, updateUser, deleteUser } = require('../controllers/user.controller');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { emailExiste, existUserById } = require('../helpers/db-validators');
@@ -7,9 +7,17 @@ const { validarJWT } = require('../middlewares/validar-jwt');
 const { existsUserByEmail } = require('../helpers/exitsUserByEmail');
 const router = Router();
 
-router.get('/:id', getUser);
+router.get('/all', getAllUsers);
 
-router.get('/all', getAllUsers)
+router.get(
+    '/publications',
+    [
+        validarJWT,
+        validarCampos
+    ]
+)
+
+router.get('/:id', getUser);
 
 router.post('/',
     [

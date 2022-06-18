@@ -57,9 +57,9 @@ const getAllPublications = async (req, res) => {
                 .skip(Number(from))
                 .limit(Number(limit))
         ]);
-        createResponse(res, 200, {total, publications})
+        createResponse(res, 200, {total, publications});
     } catch (error) {
-        createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
+        createResponse(res, 500, null, 'Error al obtener todas las publicaciones');
     }
 };
 

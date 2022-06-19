@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { getUser, newUser, getAllUsers, updateUser, deleteUser } = require('../controllers/user.controller');
+const { getUser, newUser, getAllUsers, updateUser, deleteUser, getAllPublicationsByUser } = require('../controllers/user.controller');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { emailExiste, existUserById } = require('../helpers/db-validators');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -14,7 +14,8 @@ router.get(
     [
         validarJWT,
         validarCampos
-    ]
+    ],
+    getAllPublicationsByUser
 )
 
 router.get('/:id', getUser);

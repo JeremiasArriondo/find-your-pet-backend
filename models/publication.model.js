@@ -30,7 +30,7 @@ const PublicationSchema = Schema({
 );
 
 PublicationSchema.methods.toJSON = function () {
-	const { __v, _id, ...publication } = this.toObject();
+	const { __v, ...publication } = this.toObject();
     return publication;
 };
 

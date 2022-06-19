@@ -159,6 +159,7 @@ const deletePublication = async (req, res) => {
         
         createResponse(res, 200, publication)
     } catch (error) {
+        console.log(error);
         createResponse(res, 500, null, 'Error al eliminar la publicación')
     }
 }

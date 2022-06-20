@@ -32,7 +32,6 @@ const newPublication = async (req, res = response) => {
        
         createResponse(res, 201, publicationSaved);
     } catch (error) {
-        console.log(error)
         createResponse(res, 500, 'Error al crear la publicación')
     }
 };
@@ -50,14 +49,26 @@ const getPublication = async (req, res) => {
 const getAllPublications = async (req, res) => {
     try {
         const { limit= 10, from = 0 } = req.query;
-        // const query = { state: true }
-        const [total, publications] = await Promise.all([
-            Publication.countDocuments(),
-            Publication.find()
+        const { search } = req.body;
+        const query = {$text: {$search: `${search}`}};
+        if (search){
+            const [total, publications] = await Promise.all([
+            Publication.countDocuments(query),
+            Publication.find(query)
                 .skip(Number(from))
                 .limit(Number(limit))
-        ]);
-        createResponse(res, 200, {total, publications});
+            ]);
+            return createResponse(res, 200, {total, publications})
+        } else {
+            const [total, publications] = await Promise.all([
+                Publication.countDocuments(),
+                Publication.find()
+                    .skip(Number(from))
+                    .limit(Number(limit))
+                ]);
+                return createResponse(res, 200, {total, publications})
+        };
+
     } catch (error) {
         createResponse(res, 500, null, 'Error al obtener todas las publicaciones');
     }
@@ -75,7 +86,6 @@ const getAllTypeFound = async (req, res) => {
         ]);
         createResponse(res, 200, {total, publicationsFound})
     } catch (error) {
-        console.log(error)
         createResponse(res, 500, null, 'Error al obtener todas las publicaciones')
     }
 }
@@ -84,13 +94,13 @@ const getAllTypeWanted = async (req, res) => {
     try {
         const { limit= 10, from= 0} = req.query;
         const query = {'typePublication':'BUSCADO'};
-        const [total, publicationsFind] = await Promise.all([
+        const [total, publicationsWanted] = await Promise.all([
             Publication.countDocuments(query),
             Publication.find(query)
                 .skip(Number(from))
                 .limit(Number(limit))
         ]);
-        createResponse(res, 200, {total, publicationsFind});
+        createResponse(res, 200, {total, publicationsWanted});
     } catch (error) {
         createResponse(res, 500, null, 'Error al obtener todas las publicaciones');
     }
@@ -159,7 +169,6 @@ const deletePublication = async (req, res) => {
         
         createResponse(res, 200, publication)
     } catch (error) {
-        console.log(error);
         createResponse(res, 500, null, 'Error al eliminar la publicación')
     }
 }

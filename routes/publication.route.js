@@ -51,7 +51,7 @@ router.get(
 /**
  * Ruta para obtener todas las publicaciones, esta ruta es pública
  */
-router.get(
+router.post(
     '/all',
     getAllPublications
 );

@@ -4,6 +4,7 @@ const User = require('../models/user.model');
 
 const bcryptjs = require('bcryptjs');
 const createResponse = require('../helpers/createResponse');
+const publicationModel = require('../models/publication.model');
 
 const getUser = async (req, res) => {
     try {
@@ -16,24 +17,38 @@ const getUser = async (req, res) => {
 };
 
 const getAllUsers = async (req, res = response) => {
+    try {
+        const { limit= 5, from = 0 } = req.query;
+        const query = { state: true }
 
-    const { limit= 5, from = 0 } = req.query;
-    // const query = { state: true }
+        const [total, usuarios] = await Promise.all([
+            User.countDocuments(query),
+            User.find(query)
+                .skip(Number(from))
+                .limit(Number(limit))
+        ])
+        createResponse(res, 200, {total, usuarios})
+    } catch (error) {
+        console.log(error)
+        createResponse(res, 500, null, "Ha ocurrido un error al obtener los usuarios")
+    }
+    
+};
 
-    const [total, usuarios] = await Promise.all([
-        User.countDocuments({state: true}),
-        User.find({state: true})
-            .skip(Number(from))
-            .limit(Number(limit))
-    ])
-
-    return createResponse(res, 200, {total, usuarios})
-}
+const getAllPublicationsByUser = async (req, res) => {
+    try {
+        const { _id } = req.usuario;
+        const Publications = await publicationModel.find({user: _id});
+        createResponse(res, 200, Publications);
+    } catch (error) {
+        createResponse(res, 500, null, "Ha ocurrido un error al obtener las publicaciones");
+    }
+};
 
 const newUser = async (req = request, res = response) => {
     try {
-        const { name, lastName, email, password } = req.body;
-        const user = new User({name, lastName, email, password});
+        const { name, lastname, email, password } = req.body;
+        const user = new User({name, lastname, email, password});
 
         //Encriptar la contraseña
         //El salt es el tamaño de la encriptacion, por defecto es 10
@@ -44,6 +59,7 @@ const newUser = async (req = request, res = response) => {
         //Regreso el usuario guardado
         createResponse(res, 201, user);
     } catch (error) {
+        console.log(error)
         createResponse(res, 500, null, 'Error al crear usuario');
     }  
 };
@@ -87,6 +103,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
     getUser,
     getAllUsers,
+    getAllPublicationsByUser,
     newUser, 
     updateUser,
     deleteUser

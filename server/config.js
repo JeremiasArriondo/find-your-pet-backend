@@ -47,7 +47,7 @@ class Server {
     routes() {
         this.app.use(this.authPath, require('../routes/auth.route'))
         this.app.use(this.userPath, require('../routes/user.route'))
-        this.app.use(this.publicationPath, require('../routes/publicaction.route'))
+        this.app.use(this.publicationPath, require('../routes/publication.route'))
         this.app.use(this.uploads, require('../routes/uploads'))
     }
 

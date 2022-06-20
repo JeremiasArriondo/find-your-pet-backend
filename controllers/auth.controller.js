@@ -31,7 +31,7 @@ const login = async (req, res = response) => {
             user: {
                 id: user.id,
                 name: user.name,
-                lastname: user.lastName ?? '',
+                lastname: user.lastname,
                 email: user.email
             },
             token
@@ -39,6 +39,7 @@ const login = async (req, res = response) => {
 
         createResponse(res, 200, data);
     } catch (error) {
+        console.log(error)
         createResponse(res, 500, null, 'Hable con el administrador')
     }   
 }

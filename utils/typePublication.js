@@ -1,0 +1,6 @@
+const TYPES_PUBLICATION = {
+    BUSCADO: 'BUSCADO',
+    ENCONTRADO: 'ENCONTRADO'
+};
+
+module.exports = TYPES_PUBLICATION;

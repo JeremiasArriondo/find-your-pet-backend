@@ -5,10 +5,21 @@ const UserSchema = Schema({
         type: String,
         required: [true, 'El nombre es obligatorio']
     },
+    lastname: {
+        type: String,
+        required: [true, 'El apellido es obligatorio']
+    },
+    fullName: {
+        type: String
+    },
     email: {
         type: String,
         required: [true, 'El correo es obligatorio'],
         unique: true
+    },
+    cellphone: {
+        type: String,
+        required: false
     },
     password: {
         type: String,
@@ -32,5 +43,10 @@ UserSchema.methods.toJSON = function () {
 	user.uid = _id;
     return user;
 };
+
+UserSchema.pre('save', function (next) {
+	this.fullName = this.name + ' ' + this.lastname;
+	next();
+});
 
 module.exports = model('User', UserSchema);

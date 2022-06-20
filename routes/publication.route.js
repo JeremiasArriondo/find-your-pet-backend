@@ -5,7 +5,10 @@ const {
     getPublication,
     getAllPublications,
     updatePublication,
-    deletePublication } = require('../controllers/publication.controller');
+    deletePublication, 
+    getAllTypeFound,
+    getAllTypeWanted,
+    searchPublications} = require('../controllers/publication.controller');
 const upload = require('../helpers/upload');
 const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
@@ -25,7 +28,7 @@ router.post(
         validarJWT,
         upload,
         check('description', 'La descripción es necesaria').not().isEmpty(),
-
+        check('typePublication', 'No es un tipo de publicación válida').isIn(["BUSCADO", "ENCONTRADO"]),
         validarCampos
     ],
     newPublication
@@ -37,7 +40,7 @@ router.post(
  * @param {id} 
  */
 router.get(
-    '/:id',
+    '/all/:id',
     [
         validarJWT,
         validateId
@@ -48,9 +51,34 @@ router.get(
 /**
  * Ruta para obtener todas las publicaciones, esta ruta es pública
  */
-router.get(
+router.post(
     '/all',
     getAllPublications
+);
+
+/**
+ * Ruta para obtener todas las publicaciones con el tipo ENCONTRADO
+ */
+router.get(
+    '/found',
+    getAllTypeFound
+);
+
+/**
+ * Ruta para obtener todas las publicacion con el tipo BUSCADO
+ */
+router.get(
+    '/wanted',
+    getAllTypeWanted
+);
+
+/**
+ * Ruta para obtener las publicaciones segun un filtro de texto
+ */
+
+router.post(
+    '/search',
+    searchPublications
 );
 
 /**

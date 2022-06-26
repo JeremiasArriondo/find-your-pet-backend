@@ -48,28 +48,55 @@ const getPublication = async (req, res) => {
 
 const getAllPublications = async (req, res) => {
     try {
-        const { limit= 10, from = 0 } = req.query;
+        // const { limit= 10, from = 0 } = req.query;
+        const limit = parseInt(req.query.limit) || 10;
+        const page = parseInt(req.query.page) || 1;
         const { search } = req.body;
         const query = {$text: {$search: `${search}`}};
         if (search){
             const [total, publications] = await Promise.all([
             Publication.countDocuments(query),
             Publication.find(query)
-                .skip(Number(from))
-                .limit(Number(limit))
+                .skip((page - 1) * limit)
+                .limit(limit * 1)
+                .lean()
             ]);
-            return createResponse(res, 200, {total, publications})
+            const totalPages = Math.ceil( total / limit);
+            return createResponse(
+                res, 200,
+                {
+                    publications,
+                    pagination: {
+                        total,
+                        currentPage: page,
+                        totalPages
+                    }
+                }
+            )
         } else {
             const [total, publications] = await Promise.all([
                 Publication.countDocuments(),
                 Publication.find()
-                    .skip(Number(from))
-                    .limit(Number(limit))
+                    .skip((page - 1) * limit)
+                    .limit(limit * 1)
+                    .lean()
                 ]);
-                return createResponse(res, 200, {total, publications})
+            const totalPages = Math.ceil( total / limit);
+            return createResponse(
+                res, 200,
+                {
+                    publications,
+                    pagination: {
+                        total,
+                        currentPage: page,
+                        totalPages
+                    }
+                }
+            )
         };
 
     } catch (error) {
+        console.log(error)
         createResponse(res, 500, null, 'Error al obtener todas las publicaciones');
     }
 };

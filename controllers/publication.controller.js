@@ -187,8 +187,8 @@ const deletePublication = async (req, res) => {
         const { id } = req.params;
         const publication = await Publication.findByIdAndDelete(id, {new: true});
         //Borrar imagen desde cloudinary
-        if(publication.imagen){
-            const nombreArr = modelo.img.split('/');
+        if(publication.image){
+            const nombreArr = publication.image.split('/');
             const name = nombreArr[ nombreArr.length -1 ];
             const [ public_id ] = name.split('.');
             await cloudinary.uploader.destroy(public_id);
